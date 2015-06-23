@@ -1,0 +1,26 @@
+{
+  "name": "promise-ring",
+  "version": "0.1.0",
+  "description": "Convenience methods for converting Node.js-style callbacks into native Promises.",
+  "main": "promise-ring.js",
+  "author": "David Anson (http://dlaa.me/)",
+  "license": "MIT",
+  "homepage": "https://github.com/DavidAnson/promise-ring",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavidAnson/promise-ring.git"
+  },
+  "bugs": "https://github.com/DavidAnson/promise-ring/issues",
+  "scripts": {
+    "test": "nodeunit",
+    "debug": "node debug node_modules/nodeunit/bin/nodeunit"
+  },
+  "devDependencies": {
+    "nodeunit": "^0.9.1"
+  },
+  "keywords": [
+    "promise",
+    "callback",
+    "promisify"
+  ]
+}
