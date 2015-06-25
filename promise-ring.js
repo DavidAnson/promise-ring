@@ -29,3 +29,11 @@ exports.call = function call(fn) {
   var args = slice.call(arguments, 1);
   return exports.applyBound(undefined, fn, args);
 };
+
+exports.wrapBound = function wrapBound(thisArg, fn) {
+  return exports.callBound.bind(undefined, thisArg, fn);
+};
+
+exports.wrap = function wrap(fn) {
+  return exports.call.bind(undefined, fn);
+};

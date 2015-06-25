@@ -3,6 +3,9 @@
 var fs = require("fs");
 var pr = require("../promise-ring");
 
+var goodFile = "./package.json";
+var badFile = "./missing.file";
+
 function throwFn() {
   throw new Error("throwFn");
 }
@@ -18,9 +21,9 @@ Class.prototype.fail = function() {
 }
 
 module.exports = {
-  callStatSuccess: function(test) {
+  callSuccess: function(test) {
     test.expect(2);
-    pr.call(fs.stat, "./package.json")
+    pr.call(fs.stat, goodFile)
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
         test.ok(stats.isFile(), "Incorrect Stats behavior.");
@@ -28,10 +31,10 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  callStatFailure: function(test) {
+  callFailure: function(test) {
     test.expect(2);
-    pr.call(fs.stat, "./missing.file")
-      .then(null, function(err) {
+    pr.call(fs.stat, badFile)
+      .catch(function(err) {
         test.ok(err instanceof Error, "Unexpected Error type.");
         test.equal(err.code, "ENOENT", "Incorrect Error code.");
       })
@@ -48,9 +51,9 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applyStatSuccess: function(test) {
+  applySuccess: function(test) {
     test.expect(2);
-    pr.apply(fs.stat, ["./package.json"])
+    pr.apply(fs.stat, [goodFile])
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
         test.ok(stats.isFile(), "Incorrect Stats behavior.");
@@ -58,10 +61,10 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applyStatFailure: function(test) {
+  applyFailure: function(test) {
     test.expect(2);
-    pr.apply(fs.stat, ["./missing.file"])
-      .then(null, function(err) {
+    pr.apply(fs.stat, [badFile])
+      .catch(function(err) {
         test.ok(err instanceof Error, "Unexpected Error type.");
         test.equal(err.code, "ENOENT", "Incorrect Error code.");
       })
@@ -120,9 +123,70 @@ module.exports = {
       .then(test.done, test.done);
   },
 
+  wrapSuccess: function(test) {
+    test.expect(3);
+    var stat = pr.wrap(fs.stat);
+    stat(goodFile)
+      .then(function(stats) {
+        test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
+        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        return stat(goodFile);
+      })
+      .then(function(stats) {
+        test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
+      })
+      .then(test.done, test.done);
+  },
+
+  wrapFailure: function(test) {
+    test.expect(3);
+    var stat = pr.wrap(fs.stat);
+    stat(badFile)
+      .catch(function(err) {
+        test.ok(err instanceof Error, "Unexpected Error type.");
+        test.equal(err.code, "ENOENT", "Incorrect Error code.");
+        return stat(badFile);
+      })
+      .catch(function(err) {
+        test.ok(err instanceof Error, "Unexpected Error type.");
+      })
+      .then(test.done, test.done);
+  },
+
+  wrapBoundSuccess: function(test) {
+    test.expect(2);
+    var cls = new Class();
+    var add = pr.wrapBound(cls, cls.add);
+    add(2)
+      .then(function(result) {
+        test.equal(result, 3, "Context lost.")
+        return add(3);
+      })
+      .then(function(result) {
+        test.equal(result, 4, "Context lost.")
+      })
+      .then(test.done, test.done);
+  },
+
+  wrapBoundFailure: function(test) {
+    test.expect(3);
+    var cls = new Class();
+    var fail = pr.wrapBound(cls, cls.fail);
+    fail()
+      .catch(function(err) {
+        test.ok(err instanceof Error, "Unexpected Error type.");
+        test.equal(err.message, "Class.fail 1", "Incorrect Error message.");
+        return fail();
+      })
+      .catch(function(err) {
+        test.equal(err.message, "Class.fail 1", "Incorrect Error message.");
+      })
+      .then(test.done, test.done);
+  },
+
   argsNotModified: function(test) {
     test.expect(1);
-    var originalArgs = ["./package.json"];
+    var originalArgs = [goodFile];
     var args = originalArgs.slice();
     pr.apply(fs.stat, args)
       .then(function(stats) {
