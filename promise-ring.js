@@ -9,6 +9,9 @@ exports.applyBound = function applyBound(thisArg, fn, args) {
       if (err) {
         reject(err);
       } else {
+        if (arguments.length > 2) {
+          arg = slice.call(arguments, 1);
+        }
         resolve(arg);
       }
     });

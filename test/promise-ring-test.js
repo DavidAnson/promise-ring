@@ -19,6 +19,9 @@ Class.prototype.add = function(arg, cb) {
 Class.prototype.fail = function() {
   throw new Error("Class.fail " + this.value);
 }
+Class.prototype.swap = function(left, right, cb) {
+  cb(null, right, left);
+}
 
 module.exports = {
   callSuccess: function(test) {
@@ -26,7 +29,7 @@ module.exports = {
     pr.call(fs.stat, goodFile)
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
-        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        test.ok(stats.isFile(), "Unexpected result.");
       })
       .then(test.done, test.done);
   },
@@ -56,7 +59,7 @@ module.exports = {
     pr.apply(fs.stat, [goodFile])
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
-        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        test.ok(stats.isFile(), "Unexpected result.");
       })
       .then(test.done, test.done);
   },
@@ -129,7 +132,7 @@ module.exports = {
     stat(goodFile)
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
-        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        test.ok(stats.isFile(), "Unexpected result.");
         return stat(goodFile);
       })
       .then(function(stats) {
@@ -186,12 +189,12 @@ module.exports = {
 
   wrapAll: function(test) {
     test.expect(5);
-    var fsw = pr.wrapAll(require("fs"));
+    var fsw = pr.wrapAll(fs);
     var clsw = pr.wrapAll(new Class());
     fsw.stat(goodFile)
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
-        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        test.ok(stats.isFile(), "Unexpected result.");
         return fsw.readFile(goodFile);
       })
       .then(function(content) {
@@ -204,6 +207,17 @@ module.exports = {
       })
       .catch(function(err) {
         test.equal(err.message, "Class.fail 1", "Incorrect Error message.");
+      })
+      .then(test.done, test.done);
+  },
+
+  multipleValuesResolveWithArray: function(test) {
+    test.expect(2);
+    var cls = new Class();
+    pr.call(cls.swap, 1, 2)
+      .then(function(result) {
+        test.ok(result instanceof Array, "Unexpected result type.");
+        test.deepEqual(result, [2, 1], "Unexpected result.")
       })
       .then(test.done, test.done);
   },
