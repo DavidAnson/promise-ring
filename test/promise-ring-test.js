@@ -184,6 +184,30 @@ module.exports = {
       .then(test.done, test.done);
   },
 
+  wrapAll: function(test) {
+    test.expect(5);
+    var fsw = pr.wrapAll(require("fs"));
+    var clsw = pr.wrapAll(new Class());
+    fsw.stat(goodFile)
+      .then(function(stats) {
+        test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
+        test.ok(stats.isFile(), "Incorrect Stats behavior.");
+        return fsw.readFile(goodFile);
+      })
+      .then(function(content) {
+        test.ok(content.length > 0, "Empty file content.");
+        return clsw.add(2);
+      })
+      .then(function(result) {
+        test.equal(result, 3, "Context lost.");
+        return clsw.fail();
+      })
+      .catch(function(err) {
+        test.equal(err.message, "Class.fail 1", "Incorrect Error message.");
+      })
+      .then(test.done, test.done);
+  },
+
   argsNotModified: function(test) {
     test.expect(1);
     var originalArgs = [goodFile];

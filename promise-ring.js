@@ -37,3 +37,13 @@ exports.wrapBound = function wrapBound(thisArg, fn) {
 exports.wrap = function wrap(fn) {
   return exports.call.bind(undefined, fn);
 };
+
+exports.wrapAll = function wrapAll(obj) {
+  var wrapper = {};
+  for (var key in obj) {
+    if (obj[key] instanceof Function) {
+      wrapper[key] = exports.wrapBound(obj, obj[key]);
+    }
+  }
+  return wrapper;
+};
