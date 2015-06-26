@@ -13,9 +13,13 @@
   "bugs": "https://github.com/DavidAnson/promise-ring/issues",
   "scripts": {
     "test": "nodeunit",
-    "debug": "node debug node_modules/nodeunit/bin/nodeunit"
+    "test-cover": "istanbul cover node_modules/nodeunit/bin/nodeunit",
+    "debug": "node debug node_modules/nodeunit/bin/nodeunit",
+    "lint": "eslint promise-ring.js && eslint --rule \"func-names: 0\" test"
   },
   "devDependencies": {
+    "eslint": "^0.23.0",
+    "istanbul": "^0.3.16",
     "nodeunit": "^0.9.1"
   },
   "keywords": [

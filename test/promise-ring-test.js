@@ -18,13 +18,13 @@ Class.prototype.add = function(arg, cb) {
 };
 Class.prototype.fail = function() {
   throw new Error("Class.fail " + this.value);
-}
+};
 Class.prototype.swap = function(left, right, cb) {
   cb(null, right, left);
-}
+};
 
 module.exports = {
-  callSuccess: function(test) {
+  "callSuccess": function(test) {
     test.expect(2);
     pr.call(fs.stat, goodFile)
       .then(function(stats) {
@@ -34,7 +34,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  callFailure: function(test) {
+  "callFailure": function(test) {
     test.expect(2);
     pr.call(fs.stat, badFile)
       .catch(function(err) {
@@ -44,7 +44,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  callThrowFn: function(test) {
+  "callThrowFn": function(test) {
     test.expect(2);
     pr.call(throwFn)
       .catch(function(err) {
@@ -54,9 +54,9 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applySuccess: function(test) {
+  "applySuccess": function(test) {
     test.expect(2);
-    pr.apply(fs.stat, [goodFile])
+    pr.apply(fs.stat, [ goodFile ])
       .then(function(stats) {
         test.ok(stats instanceof fs.Stats, "Unexpected Stats type.");
         test.ok(stats.isFile(), "Unexpected result.");
@@ -64,9 +64,9 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applyFailure: function(test) {
+  "applyFailure": function(test) {
     test.expect(2);
-    pr.apply(fs.stat, [badFile])
+    pr.apply(fs.stat, [ badFile ])
       .catch(function(err) {
         test.ok(err instanceof Error, "Unexpected Error type.");
         test.equal(err.code, "ENOENT", "Incorrect Error code.");
@@ -74,7 +74,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applyThrowFn: function(test) {
+  "applyThrowFn": function(test) {
     test.expect(2);
     pr.apply(throwFn)
       .catch(function(err) {
@@ -84,17 +84,17 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  callBoundSuccess: function(test) {
+  "callBoundSuccess": function(test) {
     test.expect(1);
     var cls = new Class();
     pr.callBound(cls, cls.add, 2)
       .then(function(result) {
-        test.equal(result, 3, "Context lost.")
+        test.equal(result, 3, "Context lost.");
       })
       .then(test.done, test.done);
   },
 
-  callBoundFailure: function(test) {
+  "callBoundFailure": function(test) {
     test.expect(2);
     var cls = new Class();
     pr.callBound(cls, cls.fail)
@@ -105,17 +105,17 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  applyBoundSuccess: function(test) {
+  "applyBoundSuccess": function(test) {
     test.expect(1);
     var cls = new Class();
-    pr.applyBound(cls, cls.add, [3])
+    pr.applyBound(cls, cls.add, [ 3 ])
       .then(function(result) {
-        test.equal(result, 4, "Context lost.")
+        test.equal(result, 4, "Context lost.");
       })
       .then(test.done, test.done);
   },
 
-  applyBoundFailure: function(test) {
+  "applyBoundFailure": function(test) {
     test.expect(2);
     var cls = new Class();
     pr.applyBound(cls, cls.fail)
@@ -126,7 +126,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  wrapSuccess: function(test) {
+  "wrapSuccess": function(test) {
     test.expect(3);
     var stat = pr.wrap(fs.stat);
     stat(goodFile)
@@ -141,7 +141,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  wrapFailure: function(test) {
+  "wrapFailure": function(test) {
     test.expect(3);
     var stat = pr.wrap(fs.stat);
     stat(badFile)
@@ -156,22 +156,22 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  wrapBoundSuccess: function(test) {
+  "wrapBoundSuccess": function(test) {
     test.expect(2);
     var cls = new Class();
     var add = pr.wrapBound(cls, cls.add);
     add(2)
       .then(function(result) {
-        test.equal(result, 3, "Context lost.")
+        test.equal(result, 3, "Context lost.");
         return add(3);
       })
       .then(function(result) {
-        test.equal(result, 4, "Context lost.")
+        test.equal(result, 4, "Context lost.");
       })
       .then(test.done, test.done);
   },
 
-  wrapBoundFailure: function(test) {
+  "wrapBoundFailure": function(test) {
     test.expect(3);
     var cls = new Class();
     var fail = pr.wrapBound(cls, cls.fail);
@@ -187,7 +187,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  wrapAll: function(test) {
+  "wrapAll": function(test) {
     test.expect(5);
     var fsw = pr.wrapAll(fs);
     var clsw = pr.wrapAll(new Class());
@@ -211,23 +211,23 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  multipleValuesResolveWithArray: function(test) {
+  "multipleValuesResolveWithArray": function(test) {
     test.expect(2);
     var cls = new Class();
     pr.call(cls.swap, 1, 2)
       .then(function(result) {
         test.ok(result instanceof Array, "Unexpected result type.");
-        test.deepEqual(result, [2, 1], "Unexpected result.")
+        test.deepEqual(result, [ 2, 1 ], "Unexpected result.");
       })
       .then(test.done, test.done);
   },
 
-  argsNotModified: function(test) {
+  "argumentArrayNotModified": function(test) {
     test.expect(1);
-    var originalArgs = [goodFile];
+    var originalArgs = [ goodFile ];
     var args = originalArgs.slice();
     pr.apply(fs.stat, args)
-      .then(function(stats) {
+      .then(function() {
         test.deepEqual(args, originalArgs, "Arguments array modified.");
       })
       .then(test.done, test.done);

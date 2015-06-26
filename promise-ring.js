@@ -1,8 +1,8 @@
 "use strict";
 
-// promise-ring requires a Promise implementation as available in io.js and
-// Node.js 0.12 and later
-var throwReferenceErrorIfPromiseNotDefined = Promise;
+// promise-ring requires a Promise implementation
+//   (available in io.js andNode.js 0.12+)
+(function throwReferenceErrorIfPromiseNotDefined() {}(Promise));
 var slice = Array.prototype.slice;
 
 exports.applyBound = function applyBound(thisArg, fn, args) {
@@ -20,7 +20,7 @@ exports.applyBound = function applyBound(thisArg, fn, args) {
     });
     fn.apply(thisArg, args);
   });
-}
+};
 
 exports.apply = function apply(fn, args) {
   return exports.applyBound(undefined, fn, args);
