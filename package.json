@@ -15,7 +15,8 @@
     "test": "nodeunit",
     "test-cover": "istanbul cover node_modules/nodeunit/bin/nodeunit",
     "debug": "node debug node_modules/nodeunit/bin/nodeunit",
-    "lint": "eslint promise-ring.js && eslint --rule \"func-names: 0\" test"
+    "lint": "eslint promise-ring.js && eslint --rule \"func-names: 0, no-console: 0\" test example",
+    "example": "cd example && node run-examples.js"
   },
   "devDependencies": {
     "eslint": "^0.23.0",

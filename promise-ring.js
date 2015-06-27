@@ -1,7 +1,7 @@
 "use strict";
 
 // promise-ring requires a Promise implementation
-//   (available in io.js andNode.js 0.12+)
+//   (available in io.js and Node.js 0.12+)
 (function throwReferenceErrorIfPromiseNotDefined() {}(Promise));
 var slice = Array.prototype.slice;
 
