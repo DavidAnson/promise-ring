@@ -231,5 +231,18 @@ module.exports = {
         test.deepEqual(args, originalArgs, "Arguments array modified.");
       })
       .then(test.done, test.done);
+  },
+
+  "markdownlint": function(test) {
+    test.expect(1);
+    var options = {
+      "files": [ "README.md" ]
+    };
+    pr.call(require("markdownlint"), options)
+      .then(function(result) {
+        var resultToString = result.toString();
+        test.ok(!resultToString, "Markdown issues. " + resultToString);
+      })
+      .then(test.done, test.done);
   }
 };

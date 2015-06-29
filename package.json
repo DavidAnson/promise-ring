@@ -1,7 +1,7 @@
 {
   "name": "promise-ring",
   "version": "0.1.0",
-  "description": "Convenience methods for converting Node.js-style callbacks into native Promises.",
+  "description": "Convenience methods for converting Node.js callbacks into native Promises.",
   "main": "promise-ring.js",
   "author": "David Anson (http://dlaa.me/)",
   "license": "MIT",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "eslint": "^0.23.0",
     "istanbul": "^0.3.16",
+    "markdownlint": "0.0.6",
     "nodeunit": "^0.9.1"
   },
   "keywords": [
