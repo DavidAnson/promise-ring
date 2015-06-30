@@ -1,14 +1,22 @@
 "use strict";
 
-// promise-ring requires a Promise implementation
+// promise-ring *requires* a native Promise implementation
 //   (available in io.js and Node.js 0.12+)
 (function throwReferenceErrorIfPromiseNotDefined() {}(Promise));
 var slice = Array.prototype.slice;
 
-exports.applyBound = function applyBound(thisArg, fn, args) {
-  args = slice.call(args || []);
+/**
+ * Invokes a Function that takes a callback; converts the result to a Promise.
+ *
+ * @param {Object} thisArg Value of this for the call to fn.
+ * @param {Function} fn Function to invoke.
+ * @param {Array} argsArray Arguments for fn, no callback.
+ * @returns {Promise} Promise for result.
+ */
+exports.applyBound = function applyBound(thisArg, fn, argsArray) {
+  argsArray = slice.call(argsArray || []);
   return new Promise(function executor(resolve, reject) {
-    args.push(function fnCallback(err, arg) {
+    argsArray.push(function fnCallback(err, arg) {
       if (err) {
         reject(err);
       } else {
@@ -18,32 +26,71 @@ exports.applyBound = function applyBound(thisArg, fn, args) {
         resolve(arg);
       }
     });
-    fn.apply(thisArg, args);
+    fn.apply(thisArg, argsArray);
   });
 };
 
-exports.apply = function apply(fn, args) {
-  return exports.applyBound(undefined, fn, args);
+/**
+ * Invokes a Function that takes a callback; converts the result to a Promise.
+ *
+ * @param {Function} fn Function to invoke.
+ * @param {Array} argsArray Arguments for fn, no callback.
+ * @returns {Promise} Promise for result.
+ */
+exports.apply = function apply(fn, argsArray) {
+  return exports.applyBound(undefined, fn, argsArray);
 };
 
+/**
+ * Invokes a Function that takes a callback; converts the result to a Promise.
+ *
+ * @param {Object} thisArg Value of this for the call to fn.
+ * @param {Function} fn Function to invoke, followed by arguments, no callback.
+ * @returns {Promise} Promise for result.
+ */
 exports.callBound = function callBound(thisArg, fn) {
-  var args = slice.call(arguments, 2);
-  return exports.applyBound(thisArg, fn, args);
+  var argsArray = slice.call(arguments, 2);
+  return exports.applyBound(thisArg, fn, argsArray);
 };
 
+/**
+ * Invokes a Function that takes a callback; converts the result to a Promise.
+ *
+ * @param {Function} fn Function to invoke, followed by arguments, no callback.
+ * @returns {Promise} Promise for result.
+ */
 exports.call = function call(fn) {
-  var args = slice.call(arguments, 1);
-  return exports.applyBound(undefined, fn, args);
+  var argsArray = slice.call(arguments, 1);
+  return exports.applyBound(undefined, fn, argsArray);
 };
 
+/**
+ * Wraps a Function that takes a callback with one that returns a Promise.
+ *
+ * @param {Object} thisArg Value of this for the call to fn.
+ * @param {Function} fn Function to wrap.
+ * @returns {Function} Wrapped Function that returns a Promise for fn.
+ */
 exports.wrapBound = function wrapBound(thisArg, fn) {
   return exports.callBound.bind(undefined, thisArg, fn);
 };
 
+/**
+ * Wraps a Function that takes a callback with one that returns a Promise.
+ *
+ * @param {Function} fn Function to wrap.
+ * @returns {Function} Wrapped Function that returns a Promise for fn.
+ */
 exports.wrap = function wrap(fn) {
   return exports.call.bind(undefined, fn);
 };
 
+/**
+ * Wraps all Functions of an Object with bound Functions that returns a Promise.
+ *
+ * @param {Object} obj Object with Functions to wrap.
+ * @returns {Object} Wrapped Object with functions that returns a Promise.
+ */
 exports.wrapAll = function wrapAll(obj) {
   var wrapper = {};
   for (var key in obj) {
