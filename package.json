@@ -19,8 +19,8 @@
     "example": "cd example && node run-examples.js"
   },
   "devDependencies": {
-    "eslint": "^0.23.0",
-    "istanbul": "^0.3.16",
+    "eslint": "^0.24.0",
+    "istanbul": "^0.3.17",
     "markdownlint": "0.0.6",
     "nodeunit": "^0.9.1"
   },
