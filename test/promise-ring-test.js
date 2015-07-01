@@ -10,6 +10,17 @@ function throwFn() {
   throw new Error("throwFn");
 }
 
+function echoFn(cb) {
+  cb(null, this);
+}
+
+function timeoutFn(cb) {
+  if (arguments.length !== 1) {
+    throw new Error("timeoutFn");
+  }
+  setTimeout(cb, 0);
+}
+
 function Class() {
   this.value = 1;
 }
@@ -207,6 +218,47 @@ module.exports = {
       })
       .catch(function(err) {
         test.equal(err.message, "Class.fail 1", "Incorrect Error message.");
+      })
+      .then(test.done, test.done);
+  },
+
+  "noArgumentsRequired": function(test) {
+    test.expect(1);
+    pr.call(timeoutFn)
+      .then(function() {
+        return pr.apply(timeoutFn);
+      })
+      .then(function() {
+        return pr.wrap(timeoutFn)();
+      })
+      .then(function() {
+        test.ok(true, "Chain did not complete.");
+      })
+      .then(test.done, test.done);
+  },
+
+  "canBindToSpecialValues": function(test) {
+    test.expect(5);
+    var emptyArray = [];
+    pr.callBound(undefined, echoFn)
+      .then(function(result) {
+        test.strictEqual(result, undefined, "Unable to bind to undefined.");
+        return pr.applyBound(null, echoFn);
+      })
+      .then(function(result) {
+        test.strictEqual(result, null, "Unable to bind to null.");
+        return pr.wrapBound(emptyArray, echoFn)();
+      })
+      .then(function(result) {
+        test.strictEqual(result, emptyArray, "Unable to bind to empty array.");
+        return pr.callBound(0, echoFn);
+      })
+      .then(function(result) {
+        test.strictEqual(result, 0, "Unable to bind to 0.");
+        return pr.applyBound(false, echoFn);
+      })
+      .then(function(result) {
+        test.strictEqual(result, false, "Unable to bind to false.");
       })
       .then(test.done, test.done);
   },
