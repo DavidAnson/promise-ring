@@ -237,7 +237,7 @@ module.exports = {
       .then(test.done, test.done);
   },
 
-  "canBindToSpecialValues": function(test) {
+  "bindToSpecialValues": function(test) {
     test.expect(5);
     var emptyArray = [];
     pr.callBound(undefined, echoFn)
@@ -270,6 +270,50 @@ module.exports = {
       .then(function(result) {
         test.ok(result instanceof Array, "Unexpected result type.");
         test.deepEqual(result, [ 2, 1 ], "Unexpected result.");
+      })
+      .then(test.done, test.done);
+  },
+
+  "rejectWithNonError": function(test) {
+    test.expect(2);
+    pr.call(function(cb) {
+      cb(1);
+    })
+      .catch(function(err) {
+        test.strictEqual(err, 1, "Unexpected error.");
+        return pr.call(function(cb) {
+          cb("2");
+        });
+      })
+      .catch(function(err) {
+        test.strictEqual(err, "2", "Unexpected error.");
+      })
+      .then(test.done, test.done);
+  },
+
+
+  "multipleCallbacks": function(test) {
+    test.expect(3);
+    pr.call(function(cb) {
+      cb(undefined, 1);
+      cb(undefined, 2);
+    })
+      .then(function(result) {
+        test.equal(result, 1, "Unexpected result.");
+        return pr.call(function(cb) {
+          cb(undefined, 3);
+          cb(new Error("4"));
+        });
+      })
+      .then(function(result) {
+        test.equal(result, 3, "Unexpected result.");
+        return pr.call(function(cb) {
+          cb(new Error("5"));
+          cb(undefined, 6);
+        });
+      })
+      .catch(function(err) {
+        test.equal(err.message, "5", "Unexpected Error.");
       })
       .then(test.done, test.done);
   },
