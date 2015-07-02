@@ -16,18 +16,17 @@ npm install promise-ring --save
 
 ## Overview
 
-`promise-ring` is *small, simple library* with *no external dependencies* that
-eases the use of *native JavaScript Promises* in projects *without requiring a
-Promise library*.
+`promise-ring` is *small, simple* library with *no dependencies* that eases the
+use of *native JavaScript Promises* in projects *without a Promise library*.
 
 > **Important**: `promise-ring` requires a native `Promise` implementation. If
-> `Promise` is not defined, it throws immediately. Therefore, projects needing
-> to support older run-times (like Node.js 0.10.x) should look for similar
-> functionality from a library like [Q](https://github.com/kriskowal/q),
+> `Promise` is not defined, it throws immediately. Therefore, projects that need
+> to support older environments (like Node.js 0.10.x) should look for similar
+> functionality from [Q](https://github.com/kriskowal/q),
 > [Bluebird](https://github.com/petkaantonov/bluebird),
 > [promise](https://github.com/then/promise), etc..
 
-For more about using `Promise`s to write better code:
+For more about using `Promise` to write better code, see:
 
 * [Promise, Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 * [JavaScript Promises, HTML5 Rocks](http://www.html5rocks.com/en/tutorials/es6/promises/)
@@ -114,7 +113,7 @@ readFile("../package.json", { "encoding": "utf8" })
 
 ### wrapBound
 
-`wrapBound` is to `wrap` as `apply` is to `call`.
+`wrapBound` is to `wrap` as `callBound` is to `call`.
 
 ```js
 var dbquery = pr.wrapBound(db, db.query);
@@ -128,8 +127,8 @@ dbquery("promise-ring")
 ### wrapAll
 
 As a convenience, `wrapAll` creates `Promise` wrappers for **all** functions on
-an object. It automatically binds `thisArg` to the object instance (similar to
-the `*Bound` functions above).
+an object and binds `thisArg` to that object instance (similar to the `*Bound`
+functions above).
 
 **Note**: `wrapAll` is not smart and may include functions that don't take a
 callback - it's up to the author to ensure only appropriate wrappers are used.
@@ -151,7 +150,7 @@ dbw.query("promise-ring")
 
 ## History
 
-* 0.0.1 - Initial release.
+* 0.1.0 - Initial release.
 
 [npm-image]: https://img.shields.io/npm/v/promise-ring.svg
 [npm-url]: https://www.npmjs.com/package/promise-ring
